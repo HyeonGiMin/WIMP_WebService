@@ -2,8 +2,16 @@
 "use client";
 import { useSession, signIn, signOut } from 'next-auth/react';
 
+import { getServerSession } from 'next-auth';
+
+// import { authOptions } from '../api/auth/[...nextauth]/route';
+
+
 export default function ProtectedPage() {
   const { data: session } = useSession();
+	// getServerSession(authOptions).then((session) => {
+  // console.log(session);
+  // });
 
   if (!session) {
     return (
