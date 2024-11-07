@@ -24,7 +24,7 @@ async function refreshAccessToken(token: JWT) {
 		const refreshedTokens = await response.json();
 
 		if (!response.ok) throw refreshedTokens;
-
+		console.log(response);
 		return {
 			...token,
 			accessToken: refreshedTokens.access_token,
@@ -62,6 +62,12 @@ async function doFinalSignoutHandshake(jwt: JWT) {
 export const authOptions: NextAuthOptions = {
 	secret: process.env.NEXTAUTH_SECRET,
 	debug: true,
+	session: {
+		// 세션의 최대 지속 시간을 1시간(3600초)으로 설정
+		maxAge: 60 * 60, // 1 hour
+		// 세션에 접근할 때마다 만료 시간을 연장하려면 updateAge 옵션을 설정
+		updateAge: 60 * 15, // 15분마다 세션 갱신
+	  },
 	providers: [
 		KeycloakProvider({
 			clientId: process.env.KEYCLOAK_ID as string,
@@ -77,6 +83,11 @@ export const authOptions: NextAuthOptions = {
 
 	callbacks: {
 		async jwt({ token, user, account }) {
+
+			console.log(token);
+			console.log(user);
+			console.log(account);
+
 			// Initial sign in
 			if (user && account && account.expires_at) {
 				return {
@@ -87,7 +98,7 @@ export const authOptions: NextAuthOptions = {
 					user,
 				};
 			}
-
+	
 			// Return previous token if the access token has not expired yet
 			const accessTokenExpires = token.accessTokenExpires as number;
 			if (Date.now() > accessTokenExpires) {
@@ -107,6 +118,8 @@ export const authOptions: NextAuthOptions = {
 				session.accessToken = token.accessToken;
 				session.error = token.error;
 			}
+
+
 
 			return session;
 		},

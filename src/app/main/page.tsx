@@ -2,7 +2,7 @@
 "use client";
 import { useSession, signIn, signOut } from 'next-auth/react';
 
-import { getServerSession } from 'next-auth';
+// import { getServerSession } from 'next-auth';
 
 // import { authOptions } from '../api/auth/[...nextauth]/route';
 
@@ -13,6 +13,11 @@ export default function ProtectedPage() {
   // console.log(session);
   // });
 
+  async function getData() {
+
+    
+  }
+
   if (!session) {
     return (
       <div>
@@ -21,11 +26,12 @@ export default function ProtectedPage() {
       </div>
     );
   }
-
+  console.log(session);
   return (
     <div>
       <p>안녕하세요, {session.user?.name}님!</p>
       <button onClick={() => signOut()}>로그아웃</button>
+      <button onClick={() => getData()}>세션정보</button>
     </div>
   );
 }
